@@ -2,15 +2,13 @@
 
 /*
  * PHP Veritabanı sınıfı
- * 2011 - phpr.org
+ * 2012 - phpr.org
  */
 
 class vt {
-
-	public $sayac;
 	private $baglanti;
 	private $hataGoster = true;
-	public $karekter_seti = 'utf8';
+	public $karekter_seti = 'UTF8';
 
 	function vt($kullanici, $sifre, $veritabani, $host = 'localhost') {
 		$this->baglanti = mysql_connect($host, $kullanici, $sifre) or die('MYSQL ile bağlantı kurulamadı');
@@ -23,7 +21,7 @@ class vt {
 	function sorgu($sorgu) {
 		$sorgu = mysql_query($sorgu, $this->baglanti);
 		if (!$sorgu && $this->hataGoster)
-			echo ('<p>HATA : <strong>' . mysql_error($this->baglanti) . '</strong></p>'); // bakalım deniyelim
+			echo ('<p>HATA : <strong>' . mysql_error($this->baglanti) . '</strong></p>');
 
 			return $sorgu;
 	}
@@ -58,9 +56,8 @@ class vt {
 	function tablo($sorgu) {
 		$tablo = $this->sorgu($sorgu);
 		$sonuc = array();
-		while ($sonuclar = mysql_fetch_object($tablo)):
+		while ($sonuclar = mysql_fetch_object($tablo))
 			$sonuc[] = $sonuclar;
-		endwhile;
 		return $sonuc;
 	}
 
@@ -95,13 +92,13 @@ class vt {
 		if (is_array($deger)):
 			$degerler = array();
 			foreach ($deger as $alan => $veri)
-				$degerler[] = $alan . "='" . addslashes($veri) . "'";
+				$degerler[] = $alan . "='" . $this->temizle($veri) . "'";
 		endif;
 
 		if (is_array($kosul)):
 			$kosullar = array();
 			foreach ($kosul as $alan => $veri)
-				$kosullar[] = $alan . "='" . addslashes($veri) . "'";
+				$kosullar[] = $alan . "='" . $this->temizle($veri) . "'";
 		endif;
 
 		return $this->sorgu('UPDATE ' . $tablo . ' SET ' . (is_array($deger) ? implode(',', $degerler) : $deger) . ' WHERE ' . (is_array($kosul) ? implode(' AND ', $kosullar) : $kosul));
@@ -110,7 +107,6 @@ class vt {
 	function temizle($veri) {
 		return mysql_real_escape_string($veri);
 	}
-
 }
 
 ?>
